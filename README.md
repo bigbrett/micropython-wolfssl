@@ -12,8 +12,13 @@ This module provides various `user_settings.h` files for each port to configure 
 
 1. Familiarize yourself with the micropython [documentation for user modules](https://docs.micropython.org/en/v1.19.1/develop/cmodules.html), specifically for how user modules are included in the build
 2. Create a directory for user modules, if you haven't already (in this example, we use `micropython-modules` as the directory name
-3. Clone this repository in the user module directory 
-4. Disable support for the `ussl`, `ucryptolib` and `uhashlib` modules by ensuring the following C macros are defined to 0 
+3. Clone this repository in the user module directory, and initialize submodules
+```
+cd /path/to/micropython-modules
+git clone https://github.com/bigbrett/micropython-wolfssl.git
+git submodule update --init --recursive
+```
+4. In the micropython repository, disable support for the `ussl`, `ucryptolib` and `uhashlib` modules in your port by ensuring the following C macros are defined to 0 
 ```
 #define MICROPY_PY_USSL       0
 #define MICROPY_PY_UCRYPTOLIB 0
