@@ -3,6 +3,11 @@ WOLFSSL_MOD_DIR := $(USERMOD_DIR)
 # Add required compile options for micropython
 CFLAGS_USERMOD += -DMICROPY_SSL_WOLFSSL=1 -DWOLFSSL_USER_SETTINGS
 
+ifeq ($(WOLFSSL_DEBUG),1)
+CFLAGS_USERMOD += -DWOLFSSL_DEBUG=1
+endif
+
+
 # Add wolfSSL include paths 
 CFLAGS_USERMOD += -I$(WOLFSSL_MOD_DIR)/wolfssl -I$(WOLFSSL_MOD_DIR)/wolfssl/wolfssl
 

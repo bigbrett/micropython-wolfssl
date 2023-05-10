@@ -48,8 +48,6 @@
 
 #include "wolfssl/ssl.h"
 
-#define WOLFSSL_DEBUG 0
-
 #define MP_STREAM_POLL_RDWR (MP_STREAM_POLL_RD | MP_STREAM_POLL_WR)
 
 typedef struct _mp_obj_ssl_socket_t {
