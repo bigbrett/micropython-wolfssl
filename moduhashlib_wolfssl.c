@@ -30,7 +30,7 @@
 
 #include "py/runtime.h"
 
-#if !MICROPY_PY_UHASHLIB && MICROPY_PY_WOLFSSL_UHASHLIB && MICROPY_SSL_WOLFSSL
+#if !MICROPY_PY_UHASHLIB && MICROPY_PY_WOLFSSL_UHASHLIB
 
 #ifdef HAVE_CONFIG_H
     #include "config.h"
@@ -239,4 +239,4 @@ const mp_obj_module_t mp_module_uhashlib = {
 
 MP_REGISTER_MODULE(MP_QSTR_uhashlib, mp_module_uhashlib);
 
-#endif // !MICROPY_PY_UHASHLIB && MICROPY_PY_WOLFSSL_UHASHLIB && MICROPY_SSL_WOLFSSL
+#endif // !MICROPY_PY_UHASHLIB && MICROPY_PY_WOLFSSL_UHASHLIB

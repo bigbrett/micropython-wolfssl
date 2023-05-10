@@ -28,7 +28,7 @@
 
 #include "py/mpconfig.h"
 
-#if !MICROPY_PY_UCRYPTOLIB && MICROPY_PY_WOLFSSL_UCRYPTOLIB && MICROPY_SSL_WOLFSSL
+#if !MICROPY_PY_UCRYPTOLIB && MICROPY_PY_WOLFSSL_UCRYPTOLIB
 
 #include <assert.h>
 #include <string.h>
@@ -322,4 +322,4 @@ const mp_obj_module_t mp_module_ucryptolib = {
 
 MP_REGISTER_MODULE(MP_QSTR_ucryptolib, mp_module_ucryptolib);
 
-#endif // !MICROPY_PY_UCRYPTOLIB && MICROPY_PY_WOLFSSL_UCRYPTOLIB && MICROPY_SSL_WOLFSSL
+#endif // !MICROPY_PY_UCRYPTOLIB && MICROPY_PY_WOLFSSL_UCRYPTOLIB
