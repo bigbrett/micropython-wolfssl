@@ -1,17 +1,21 @@
 WOLFSSL_MOD_DIR := $(USERMOD_DIR)
 
 # Add required compile options for micropython
-CFLAGS_USERMOD += -DWOLFSSL_USER_SETTINGS -DMICROPY_PY_WOLFSSL_UHASHLIB=1 -DMICROPY_PY_WOLFSSL_UCRYPTOLIB=1 -DMICROPY_PY_WOLFSSL_USSL
+CFLAGS_USERMOD += -DWOLFSSL_USER_SETTINGS
+# define built-in compile guards to 0 to prevent compilation of extmod/moduhashlib.c, extmod/moducryptolib.c, and extmod/modussl_*.c
+CFLAGS_USERMOD += -DMICROPY_PY_UHASHLIB=0 -DMICROPY_PY_UCRYPTOLIB=0 -DMICROPY_PY_USSL=0
+# replace with wolfSSL versions
+CFLAGS_USERMOD += -DMICROPY_PY_WOLFSSL_UHASHLIB=1 -DMICROPY_PY_WOLFSSL_UCRYPTOLIB=1 -DMICROPY_PY_WOLFSSL_USSL=1
 
 ifeq ($(WOLFSSL_DEBUG),1)
 CFLAGS_USERMOD += -DWOLFSSL_DEBUG=1
 endif
 
 
-# Add wolfSSL include paths 
+# Add wolfSSL include paths
 CFLAGS_USERMOD += -I$(WOLFSSL_MOD_DIR)/wolfssl -I$(WOLFSSL_MOD_DIR)/wolfssl/wolfssl
 
-# Add the user-specified (port-specific) user settings file to the include path 
+# Add the user-specified (port-specific) user settings file to the include path
 CFLAGS_USERMOD += -I$(dir $(WOLFSSL_USER_SETTINGS_FILE))
 
 
