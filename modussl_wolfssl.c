@@ -290,37 +290,39 @@ STATIC mp_obj_ssl_socket_t *socket_new(mp_obj_t sock, struct ssl_args *args) {
     return o;
 
 cleanup:
-    // get error from SSL object before freeing it
-    int err = WOLFSSL_SUCCESS;
-    if (o->ssl != NULL) {
-        err = wolfSSL_get_error(o->ssl, ret);
-    } else {
-        err = ret;
+    {
+        // get error from SSL object before freeing it
+        int err = WOLFSSL_SUCCESS;
+        if (o->ssl != NULL) {
+            err = wolfSSL_get_error(o->ssl, ret);
+        } else {
+            err = ret;
+        }
+
+        wolfSSL_Cleanup();
+
+        switch (err) {
+            case ASN_PARSE_E:
+                mp_raise_ValueError(MP_ERROR_TEXT("invalid key"));
+                break;
+            default:
+                wolfssl_raise_error(err);
+                break;
+        }
+
+        wolfSSL_Cleanup();
+
+        // BRN-TODO Python error raising
+        //if (ret == MBEDTLS_ERR_SSL_ALLOC_FAILED) {
+        //    mp_raise_OSError(MP_ENOMEM);
+        //} else if (ret == MBEDTLS_ERR_PK_BAD_INPUT_DATA) {
+        //    mp_raise_ValueError(MP_ERROR_TEXT("invalid key"));
+        //} else if (ret == MBEDTLS_ERR_X509_BAD_INPUT_DATA) {
+        //    mp_raise_ValueError(MP_ERROR_TEXT("invalid cert"));
+        //} else {
+        //    mbedtls_raise_error(ret);
+        //}
     }
-    
-    wolfSSL_Cleanup();
-
-    switch (err) {
-        case ASN_PARSE_E:
-            mp_raise_ValueError(MP_ERROR_TEXT("invalid key"));
-            break;
-        default:
-            wolfssl_raise_error(err);
-            break;
-    }
-
-    wolfSSL_Cleanup();
-
-    // BRN-TODO Python error raising
-    //if (ret == MBEDTLS_ERR_SSL_ALLOC_FAILED) {
-    //    mp_raise_OSError(MP_ENOMEM);
-    //} else if (ret == MBEDTLS_ERR_PK_BAD_INPUT_DATA) {
-    //    mp_raise_ValueError(MP_ERROR_TEXT("invalid key"));
-    //} else if (ret == MBEDTLS_ERR_X509_BAD_INPUT_DATA) {
-    //    mp_raise_ValueError(MP_ERROR_TEXT("invalid cert"));
-    //} else {
-    //    mbedtls_raise_error(ret);
-    //}
 }
 
 STATIC mp_obj_t mod_ssl_getpeercert(mp_obj_t o_in, mp_obj_t binary_form) {
