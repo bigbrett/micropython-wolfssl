@@ -95,7 +95,7 @@ STATIC NORETURN void wolfssl_raise_error(int err) {
     // Put the exception object together
     o_str->base.type = &mp_type_str;
     o_str->data = o_str_buf;
-    o_str->len = strnlen((char*)o_str_buf, WOLFSSL_MAX_ERROR_SZ);
+    o_str->len = strlen((char*)o_str_buf);
     o_str->hash = qstr_compute_hash(o_str->data, o_str->len);
     // raise
     mp_obj_t args[2] = { MP_OBJ_NEW_SMALL_INT(err), MP_OBJ_FROM_PTR(o_str)};

@@ -407,11 +407,11 @@ extern "C" {
     #include <stddef.h>  /* for size_t */
     extern void *myMalloc(size_t n, void* heap, int type);
     extern void myFree(void *p, void* heap, int type);
-    extern void *myRealloc(void *p, size_t n, void* heap, int type);
+    // extern void *myRealloc(void *p, size_t n, void* heap, int type);
 
     #define XMALLOC(n, h, t)     myMalloc(n, h, t)
     #define XFREE(p, h, t)       myFree(p, h, t)
-    #define XREALLOC(p, n, h, t) myRealloc(p, n, h, t)
+    // #define XREALLOC(p, n, h, t) myRealloc(p, n, h, t)
 #endif
 
 #if 0
@@ -449,6 +449,10 @@ extern "C" {
 /* ------------------------------------------------------------------------- */
 /* Port */
 /* ------------------------------------------------------------------------- */
+#define CTYPE_USER
+#include <stdint.h>
+extern uint32_t unichar_tolower(uint32_t);
+#define XTOLOWER unichar_tolower
 
 /* Override Current Time */
 /* Allows custom "custom_time()" function to be used for benchmark */
@@ -456,8 +460,6 @@ extern "C" {
 //#define WOLFSSL_GMTIME
 //#define USER_TICKS
 //extern unsigned long my_time(unsigned long* timer);
-//#define XTIME my_time
-
 
 /* ------------------------------------------------------------------------- */
 /* RNG */
@@ -469,6 +471,11 @@ extern "C" {
 extern unsigned int my_rng_seed_gen(void);
 #undef  CUSTOM_RAND_GENERATE
 #define CUSTOM_RAND_GENERATE  my_rng_seed_gen
+
+//
+//#define WOLFSSL_STM32_CUBEMX
+// #define WOLFSSL_STM32_RNG_NOLIB
+// #define STM32_RNG
 
 /* Choose RNG method */
 #if 1
@@ -629,7 +636,7 @@ extern unsigned int my_rng_seed_gen(void);
 //#define NO_CODING
 
 #undef  NO_ASN_TIME
-//#define NO_ASN_TIME
+#define NO_ASN_TIME
 
 #undef  NO_CERTS
 //#define NO_CERTS

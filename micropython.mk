@@ -11,13 +11,23 @@ ifeq ($(WOLFSSL_DEBUG),1)
 CFLAGS_USERMOD += -DWOLFSSL_DEBUG=1
 endif
 
-
-# Add wolfSSL include paths
+# Add wolfSSL generic include paths
 CFLAGS_USERMOD += -I$(WOLFSSL_MOD_DIR)/wolfssl -I$(WOLFSSL_MOD_DIR)/wolfssl/wolfssl
 
 # Add the user-specified (port-specific) user settings file to the include path
 CFLAGS_USERMOD += -I$(dir $(WOLFSSL_USER_SETTINGS_FILE))
 
+WOLFSSL_PORTS_DIR = $(WOLFSSL_MOD_DIR)/ports
+WOLFSSL_PORT ?= unix
+
+# Add the appropriate port file to source list if required
+ifeq ($(WOLFSSL_PORT), unix)
+$(info "unix port set")
+endif
+ifeq ($(WOLFSSL_PORT), stm32)
+$(info "stm32 port set")
+SRC_USERMOD += $(WOLFSSL_PORTS_DIR)/$(WOLFSSL_PORT)/wolfssl_port.c
+endif
 
 # Add all C files to SRC_USERMOD.
 SRC_USERMOD += $(WOLFSSL_MOD_DIR)/modussl_wolfssl.c
