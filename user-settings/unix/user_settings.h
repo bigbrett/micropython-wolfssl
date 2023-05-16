@@ -21,9 +21,6 @@ extern "C" {
 #undef  KEEP_PEER_CERT
 #define KEEP_PEER_CERT
 
-#undef  WOLFSSL_PSS_SALT_LEN_DISCOVER
-#define WOLFSSL_PSS_SALT_LEN_DISCOVER
-
 #undef  HAVE_C___ATOMIC
 #define HAVE_C___ATOMIC 1
 
@@ -31,7 +28,7 @@ extern "C" {
 #define HAVE_THREAD_LS
 
 #undef  DEBUG_WOLFSSL
-#define DEBUG_WOLFSSL
+//#define DEBUG_WOLFSSL
 
 #undef  NO_DO178
 #define NO_DO178
@@ -55,13 +52,13 @@ extern "C" {
 #define WOLFSSL_USE_ALIGN
 
 #undef  WOLFSSL_SHA224
-#define WOLFSSL_SHA224
+//#define WOLFSSL_SHA224
 
 #undef  WOLFSSL_SHA512
 #define WOLFSSL_SHA512
 
 #undef  WOLFSSL_SHA384
-#define WOLFSSL_SHA384
+//#define WOLFSSL_SHA384
 
 #undef  HAVE_HKDF
 #define HAVE_HKDF
@@ -108,9 +105,6 @@ extern "C" {
 #undef  HAVE_HASHDRBG
 #define HAVE_HASHDRBG
 
-#undef  HAVE_TLS_EXTENSIONS
-#define HAVE_TLS_EXTENSIONS
-
 #undef  HAVE_SNI
 #define HAVE_SNI
 
@@ -148,10 +142,11 @@ extern "C" {
 #define NO_MD4
 
 #undef  WOLFSSL_SP_MATH_ALL
-#define WOLFSSL_SP_MATH_ALL
+//#define WOLFSSL_SP_MATH_ALL
+#define WOLFSSL_SP_SMALL
 
 #undef  WOLFSSL_SP_X86_64
-#define WOLFSSL_SP_X86_64
+//#define WOLFSSL_SP_X86_64
 
 #undef  WC_NO_ASYNC_THREADING
 #define WC_NO_ASYNC_THREADING
@@ -191,62 +186,4 @@ extern "C" {
 
 #endif /* WOLFSSL_USER_SETTINGS_H */
 
-
-//#define WOLFSSL_OPTIONS_H
-//#define WOLFSSL_AES_DIRECT
-//#define KEEP_PEER_CERT
-//#define WOLFSSL_PSS_SALT_LEN_DISCOVER
-//#define HAVE_C___ATOMIC 1
-//#define HAVE_THREAD_LS
-//#define DEBUG_WOLFSSL
-//#define NO_DO178
-//#define WOLFSSL_X86_64_BUILD
-//#define ERROR_QUEUE_PER_THREAD
-//#define TFM_TIMING_RESISTANT
-//#define ECC_TIMING_RESISTANT
-//#define WC_RSA_BLINDING
-//#define WOLFSSL_USE_ALIGN
-//#define WOLFSSL_SHA224
-//#define WOLFSSL_SHA512
-//#define WOLFSSL_SHA384
-//#define HAVE_HKDF
-//#define NO_DSA
-//#define HAVE_ECC
-//#define TFM_ECC256
-//#define ECC_SHAMIR
-//#define WC_RSA_PSS
-//#define WOLFSSL_PSS_LONG_SALT
-//#define WOLFSSL_ASN_TEMPLATE
-//#define WOLFSSL_BASE64_ENCODE
-//#define WOLFSSL_SHA3
-//#define WOLFSSL_NO_SHAKE128
-//#define WOLFSSL_NO_SHAKE256
-//#define HAVE_POLY1305
-//#define HAVE_CHACHA
-//#define HAVE_HASHDRBG
-//#define HAVE_TLS_EXTENSIONS
-//#define HAVE_SNI
-//#define HAVE_TLS_EXTENSIONS
-//#define HAVE_SUPPORTED_CURVES
-//#define HAVE_FFDHE_2048
-//#define HAVE_SUPPORTED_CURVES
-//#define WOLFSSL_TLS13
-//#define HAVE_TLS_EXTENSIONS
-//#define HAVE_EXTENDED_MASTER
-//#define NO_RC4
-//#define HAVE_ENCRYPT_THEN_MAC
-//#define NO_PSK
-//#define NO_MD4
-//#define WOLFSSL_SP_MATH_ALL
-//#define WOLFSSL_SP_X86_64
-//#define WC_NO_ASYNC_THREADING
-//#define HAVE_DH_DEFAULT_PARAMS
-//#define WOLFSSL_SYS_CA_CERTS
-//#define NO_DES3
-//#define GCM_TABLE_4BIT
-//#define HAVE_AESGCM
-//#define HAVE_TLS_EXTENSIONS
-//#define HAVE_SERVER_RENEGOTIATION_INFO
-//#define HAVE___UINT128_T 1
-//#define HAVE_WC_INTROSPECTION
 
