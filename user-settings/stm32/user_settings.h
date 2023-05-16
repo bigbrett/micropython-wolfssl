@@ -77,8 +77,8 @@ extern "C" {
     #define WOLFSSL_SP_ASM      /* required if using the ASM versions */
     //#define WOLFSSL_SP_ARM32_ASM
     //#define WOLFSSL_SP_ARM64_ASM
-    //#define WOLFSSL_SP_ARM_THUMB_ASM
-    #define WOLFSSL_SP_ARM_CORTEX_M_ASM
+    #define WOLFSSL_SP_ARM_THUMB_ASM
+    //#define WOLFSSL_SP_ARM_CORTEX_M_ASM
 #endif
 
 /* ------------------------------------------------------------------------- */
@@ -248,10 +248,10 @@ extern "C" {
     #define WOLFSSL_AES_DIRECT
 
     #undef  HAVE_AES_ECB
-    //#define HAVE_AES_ECB
+    #define HAVE_AES_ECB
 
     #undef WOLFSSL_AES_COUNTER
-    //#define WOLFSSL_AES_COUNTER
+    #define WOLFSSL_AES_COUNTER
 
     #undef  HAVE_AESCCM
     //#define HAVE_AESCCM
@@ -309,7 +309,7 @@ extern "C" {
 #undef NO_SHA256
 #if 1
     /* not unrolled - ~2k smaller and ~25% slower */
-    //#define USE_SLOW_SHA256
+    #define USE_SLOW_SHA256
 
     /* Sha224 */
     #if 0
