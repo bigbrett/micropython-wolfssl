@@ -342,8 +342,7 @@ extern "C" {
 
 /* MD5 */
 #undef  NO_MD5
-#if 0
-
+#if 1
 #else
     #define NO_MD5
 #endif
@@ -585,10 +584,10 @@ extern unsigned int my_rng_seed_gen(void);
 //#define NO_WOLFSSL_CLIENT
 
 #undef  NO_CRYPT_TEST
-//#define NO_CRYPT_TEST
+#define NO_CRYPT_TEST
 
 #undef  NO_CRYPT_BENCHMARK
-//#define NO_CRYPT_BENCHMARK
+#define NO_CRYPT_BENCHMARK
 
 #undef  WOLFCRYPT_ONLY
 //#define WOLFCRYPT_ONLY
