@@ -31,7 +31,7 @@ extern "C" {
 #if (defined(WOLFSSL_CONF_OPTIMIZE_SIZE) && defined(WOLFSSL_CONF_OPTIMIZE_SPEED)) \
     || (defined(WOLFSSL_CONF_OPTIMIZE_SPEED) && defined(WOLFSSL_CONF_OPTIMIZE_MEM)) \
     || (defined(WOLFSSL_CONF_OPTIMIZE_SIZE) && defined(WOLFSSL_CONF_OPTIMIZE_MEM))
-    #error "Please choose only one optimization method: size, speed, or memory
+    #error "Please choose only one optimization method: size, speed, or memory"
 #elif !defined(WOLFSSL_CONF_OPTIMIZE_SIZE) && !defined(WOLFSSL_CONF_OPTIMIZE_SPEED) && !defined(WOLFSSL_CONF_OPTIMIZE_MEM)
     // default optimization is for size
     #define WOLFSSL_CONF_OPTIMIZE_SIZE
@@ -46,8 +46,7 @@ extern "C" {
 #define WOLFSSL_USER_IO
 #define WOLFSSL_ASN_TEMPLATE
 
-#if
-#define WOLFSSL_SMALL_STACK
+//#define WOLFSSL_SMALL_STACK
 
 
 /* ------------------------------------------------------------------------- */
@@ -218,6 +217,16 @@ extern uint32_t unichar_tolower(uint32_t);
 //#define WOLFSSL_GMTIME
 //#define USER_TICKS
 //extern unsigned long my_time(unsigned long* timer);
+//#define NO_ASN_TIME
+
+//#define HAL_RTC_MODULE_ENABLED
+
+#include <time.h>
+#define TIME_OVERRIDES
+#define HAVE_TIME_T_TYPE
+#define HAVE_TM_TYPE
+//#define WOLFSSL_GMTIME
+
 
 /* ------------------------------------------------------------------------- */
 /* RNG */
@@ -285,7 +294,6 @@ extern unsigned int my_rng_seed_gen(void);
 #define NO_PSK
 #define NO_MD4
 #define NO_PWDBASED
-#define NO_ASN_TIME
 #define WOLFSSL_IGNORE_FILE_WARN
 
 
