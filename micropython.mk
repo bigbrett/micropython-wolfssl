@@ -1,7 +1,7 @@
 WOLFSSL_MOD_DIR := $(USERMOD_DIR)
 
 # Add required compile options for micropython
-CFLAGS_USERMOD += -DWOLFSSL_USER_SETTINGS
+CFLAGS_USERMOD += -DWOLFSSL_USER_SETTINGS -Wno-error=unused-function
 # define built-in compile guards to 0 to prevent compilation of extmod/moduhashlib.c, extmod/moducryptolib.c, and extmod/modussl_*.c
 CFLAGS_USERMOD += -DMICROPY_PY_UHASHLIB=0 -DMICROPY_PY_UCRYPTOLIB=0 -DMICROPY_PY_USSL=0
 # replace with wolfSSL versions
