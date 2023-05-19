@@ -8,10 +8,16 @@ sock.connect(sockaddr)
 
 wsock = ssl.wrap_socket(sock, cert_reqs=0)
 
-print("socket wrapped!")
+testmsg = "foo, bar, noo, baz"
 
-wsock.write(b"bar") 
-assert wsock.read(3) == b"bar"
+wsock.write(testmsg.encode('utf-8'))
 
-print("SUCCESS!")
+print("Sent: \"{}\"".format(testmsg))
+
+resp = wsock.read(len(testmsg.encode('utf-8')))
+
+assert resp.decode('utf-8') == testmsg
+
+print("Recv: \"{}\"".format(resp.decode('utf-8')))
+
 
