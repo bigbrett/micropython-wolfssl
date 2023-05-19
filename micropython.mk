@@ -15,19 +15,36 @@ endif
 CFLAGS_USERMOD += -I$(WOLFSSL_MOD_DIR)/wolfssl -I$(WOLFSSL_MOD_DIR)/wolfssl/wolfssl
 
 # Add the user-specified (port-specific) user settings file to the include path
-CFLAGS_USERMOD += -I$(dir $(WOLFSSL_USER_SETTINGS_FILE))
+#CFLAGS_USERMOD += -I$(dir $(WOLFSSL_USER_SETTINGS_FILE))
 
-WOLFSSL_PORTS_DIR = $(WOLFSSL_MOD_DIR)/ports
+#WOLFSSL_PORTS_DIR = $(WOLFSSL_MOD_DIR)/ports
 WOLFSSL_PORT ?= unix
+WOLFSSL_PORT_DIR = $(WOLFSSL_MOD_DIR)/ports/$(WOLFSSL_PORT)
 
-# Add the appropriate port file to source list if required
-ifeq ($(WOLFSSL_PORT), unix)
-$(info "unix port set")
+$(info [micropython-wolfssl] PORT=$(WOLFSSL_PORT))
+$(info [micropython-wolfssl] PORT_DIR=$(WOLFSSL_PORT_DIR))
+
+# check user supplied port corresponds to a port directory with a valid user settings file
+ifneq ($(wildcard $(WOLFSSL_PORT_DIR)/user_settings.h),)
+# If port is valid, use either user supplied settings file, or default one for the port
+ifneq ($(wildcard $(WOLFSSL_USER_SETTINGS_FILE)),)
+$(info [micropython-wolfssl] Using custom user settings file: $(WOLFSSL_USER_SETTINGS_FILE))
+CFLAGS_USERMOD += -I$(dir $(WOLFSSL_USER_SETTINGS_FILE))
+else
+$(info [micropython-wolfssl] Using default user settings file: $(WOLFSSL_PORT_DIR/user_settings.h))
+CFLAGS_USERMOD += -I$(dir $(WOLFSSL_PORT_DIR)/user_settings.h)
 endif
-ifeq ($(WOLFSSL_PORT), stm32)
-$(info "stm32 port set")
-SRC_USERMOD += $(WOLFSSL_PORTS_DIR)/$(WOLFSSL_PORT)/wolfssl_port.c
-endif
+else
+$(error no valid port directory with user settings for WOLFSSL_PORT: $(WOLFSSL_PORT_DIR))
+endif 
+
+# Add the appropriate port file to source list if it exists
+ifneq ($(wildcard $(WOLFSSL_PORT_DIR)/wolfssl_port.c),)
+SRC_USERMOD += $(WOLFSSL_PORT_DIR)/wolfssl_port.c
+$(info [micropython-wolfssl]: using port file: $(WOLFSSL_PORT_DIR)/wolfssl_port.c)
+else
+$(info [micropython-wolfssl]: no port file found for port="$(WOLFSSL_PORT)")
+endif 
 
 # Add all C files to SRC_USERMOD.
 SRC_USERMOD += $(WOLFSSL_MOD_DIR)/modussl_wolfssl.c
