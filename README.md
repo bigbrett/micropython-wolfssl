@@ -25,7 +25,7 @@ micropython-wolfssl/
 └── wolfssl                 <-- wolfSSL submodule
 ```
 ## Port-specific configuration
-`micropython-wolfssl` supports a subset of the official ports supported by micropython. The names of the ports are the same, and you must specify the port you are targeting when building micropython using the makefile variable `WOLFSSL_PORT`. Valid values are any supported micropython port, who's names correspond to the name of the various port directories at `micropython/ports/` in the micropython repository. If left unspecified, the default port is the `unix` port. Each port supported by
+`micropython-wolfssl` supports a subset of the official ports included in micropython. The names of the ports are the same, and you must specify the port you are targeting when building micropython using the makefile variable `WOLFSSL_PORT`. Valid values are any supported micropython port, who's names correspond to the name of the various port directories at `micropython/ports/` in the micropython repository. If left unspecified, the default port is the `unix` port. Each port supported by
 micropython can be found in its own directory under `micropython-wolfssl/ports`. Each port contains a `user_settings.h` file, and optionally, a `wolfssl_port.c` file.
 
 ### User Settings
