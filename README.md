@@ -24,9 +24,14 @@ micropython-wolfssl/
 ├── tests                   
 └── wolfssl                 <-- wolfSSL submodule
 ```
-## Port-specific files
+## Port-specific configuration
+`micropython-wolfssl` supports a subset of the official ports supported by micropython. The names of the ports are the same, and you must specify the port you are targeting when building micropython using the makefile variable `WOLFSSL_PORT`. Valid values are any supported micropython port, who's names correspond to the name of the various port directories at `micropython/ports/` in the micropython repository. If left unspecified, the default port is the `unix` port. Each port supported by
+micropython can be found in its own directory under `micropython-wolfssl/ports`. Each port contains a `user_settings.h` file, and optionally, a `wolfssl_port.c` file.
+
+### User Settings
 wolfSSL can be customized for a specific target application or platform using a `user_settings.h` file. This module provides a default `user_settings.h` file for each port located in the `ports` directory. If you wish you further customise wolfSSL, you can create your own `user_settings.h` and pass it to the build system through the `WOLFSSL_USER_SETTINGS_FILE` variable. This will override the default one located in the `ports/$(WOLFSSL_PORT)` directory. The directory containing this file will be added to the compiler include path, so it is recommended you create a new directory holding this file with nothing else in it.
 
+### Port-specific code
 Some ports also contain a `wolfssl_port.c` file containing implementations of certain functions required to enable wolfSSL to work on a specific hardware platform. These port files can be found in `ports/` directory, where each subdirectory corresponds to the specific micropython port. 
 
 ## Building micropython with `micropython-wolfssl`
