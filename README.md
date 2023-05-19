@@ -12,9 +12,20 @@ wolfSSL  is dual licensed under both the GPLv2 as well as standard commercial li
 `micropython-wolfssl` replaces the built-in module implementations of SSL/TLS (`ussl`), encryption (`ucryptolib`), and hashing (`uhashlib`), and implements its own API-compatible version. This means that python code utilizing these modules should not need to be changed when `micropython-wolfssl` is used, and all micropython documentation for these modules can be followed. The only changes in behavior are different SSL error codes returned on failure. WolfSSL has much more comprehensive error codes than most other SSL libraries, and are detailed in [appendix F of the wolfSSL manual](https://www.wolfssl.com/documentation/manuals/wolfssl/appendix06.html).
 
 ## Module Structure
-<describe files> 
 
-This module provides various `user_settings.h` files for each port to configure wolfSSL differently. These can be found in the `user-settings` directory, where each subdirectory corresponds to a specific micropython port and contains the appropriate `user_settings.h` file, which should be passed to your port's build through the `WOLFSSL_USER_SETTINGS_FILE` makefile variable (more on this in he steps below). If you wish you further customise wolfSSL, you can provide your own `user_settings.h` in a location of your choosing. Some ports also contain a `wolfssl_port.c` file containing implementations of certain functions required to enable wolfSSL to work on a specific hardware platform. These port files can be found in `ports/` directory, where each subdirectory corresponds to the specific micropython port.
+```
+micropython-wolfssl/
+├── micropython.mk          <-- makefile fragment parsed by micropython
+├── moducryptolib_wolfssl.c <-- implementation of ucryptolib
+├── moduhashlib_wolfssl.c   <-- implemenation of uhashlib
+├── modussl_wolfssl.c       <-- implementation of ussl
+├── ports                   <-- directory containing port-specific configuration and code
+├── README.md
+├── tests                   
+└── wolfssl                 <-- wolfSSL submodule
+```
+## Port-specific files
+wolfSSL can be customized for a specific target application or platform using a `user_settings.h` file. This module provides a default `user_settings.h` file for each port in the `ports` directory. Some ports also contain a `wolfssl_port.c` file containing implementations of certain functions required to enable wolfSSL to work on a specific hardware platform. These port files can be found in `ports/` directory, where each subdirectory corresponds to the specific micropython port. If you wish you further customise wolfSSL, you can create your own `user_settings.h` and pass it to the build system through the `WOLFSSL_USER_SETTINGS_FILE` variable. The directory containing this file will be added to the compiler include path, so it is recommended you create a new directory holding this file with nothing else in it.
 
 ## Building micropython with `micropython-wolfssl`
 `micropython-wolfssl` needs to override the default implementations of a few micropython modules in order to work. This requires setting a few important C macros in your port's build configuration to prevent the default implementations from being compiled. These macros are:
