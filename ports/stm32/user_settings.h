@@ -48,6 +48,8 @@ extern "C" {
 
 //#define WOLFSSL_SMALL_STACK
 
+//#define NO_WOLFSSL_SERVER
+#define WOLFSSL_NO_TLS12
 
 /* ------------------------------------------------------------------------- */
 /* Math Configuration */

@@ -166,6 +166,13 @@ extern "C" {
 #undef  HAVE_AESGCM
 #define HAVE_AESGCM
 
+#define HAVE_AES_CBC
+
+#define WOLFSSL_AES_DIRECT
+#define HAVE_AES_ECB
+#define WOLFSSL_AES_COUNTER
+
+
 #undef  HAVE_TLS_EXTENSIONS
 #define HAVE_TLS_EXTENSIONS
 
