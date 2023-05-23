@@ -41,9 +41,10 @@ Some ports also contain a `wolfssl_port.c` file containing implementations of ce
 #define MICROPY_PY_UCRYPTOLIB 0   // turns off built-in ucryptolib module
 #define MICROPY_PY_UHASHLIB   0   // turns off built-in uhashlib module
 ```
- Unfortunately, there is little consistency between the makefiles/cmake files for each each micropython port with regards to these macros. As such, each port might define these macros in a different location, might optionally define them based on a different macro, or might not define them at all, relying on a default value instead. Therefore it might take a little bit of hunting through the source code to find out the best way to disable these macros in your port. Grep is your friend here.
 
- Examples below are for the Unix port but should generalize across all ports, though macros may be defined in different locations.
+Additionally, the C macro `MICROPY_TRACKED_ALLOC` must be defined to 1, which not all ports do by default.
+
+Unfortunately, there is little consistency between the makefiles/cmake files for each each micropython port with regards to these macros. As such, each port might define these macros in a different location, might optionally define them based on a different macro, or might not define them at all, relying on a default value instead. Therefore it might take a little bit of hunting through the source code to find out the best way to disable these macros in your port. See section [Disabling-built-in modules for each port](disabling-built-in-modules-for-each-port) for more information.
 
 ### Steps
 
@@ -55,14 +56,14 @@ cd /path/to/micropython-modules
 git clone https://github.com/bigbrett/micropython-wolfssl.git
 git submodule update --init --recursive
 ```
-4. In the main micropython repository, disable support for the `ussl`, `ucryptolib` and `uhashlib` modules in your port by ensuring the following C macros are defined to 0
+4. In the main micropython repository, disable support for the `ussl`, `ucryptolib` and `uhashlib` modules in your port by ensuring the following C macros are defined to 0 at compile time
 ```
 #define MICROPY_PY_USSL       0
 #define MICROPY_PY_UCRYPTOLIB 0
 #define MICROPY_PY_UHASHLIB   0
 ```
 
-**NOTE**: For the unix port, this can be easily achieved by setting the `MICROPY_PY_USSL=0` makefile variable in `ports/unix/mpconfigport.mk`. This should automatically ensure the `MICROPY_PY_USSL` C macro is not set, as well as prevent the `MICROPY_PY_UCRYPTOLIB` and `MICROPY_PY_UHASHLIB` C macros  from later being defined to 1 in `port/unix/variants/mpconfigvariant_common.h`. If this doesn't work (if you get errors about multiple definitions for `uhashlib` and `ucryptolib` fucntions or types) then it is possible the build system has changed and you need to find another way to ensure the `MICROPY_PY_USSL`, `MICROPY_PY_UCRYPTOLIB` and `MICROPY_PY_UHASHLIB` C macros are all defined to zero at build time. `grep` will be your friend here...
+**NOTE**: See [Disabling built-in modules for each port](disabling-built-in-modules-for-each-port) section below for port-specific instructions on the best way to do this.
 
 5. Run `make clean` for your port (for some ports you need to include the `BOARD` or `VARIANT` argument to make)
 6. Build your micropython port, providing `make` with two important command line variables: The path to your user module directory in the `USER_C_MODULES` variable, and the target port for wolfSSL in the `WOLFSSL_PORT` variable:
@@ -74,4 +75,16 @@ If you want to use a custom `user_settings.h` for your port, pass it to make thr
 make USER_C_MODULES=/path/to/micropython-modules  WOLFSSL_PORT=unix \
      WOLFSSL_USER_SETTINGS_FILE=/path/to/user_settings.h
 ```
+
+### Disabling built-in modules for each port
+Note: If the following steps don't work (if you get errors about multiple definitions for `uhashlib` and `ucryptolib` fucntions or types) then it is possible the build system has changed and you need to find another way to ensure the `MICROPY_PY_USSL`, `MICROPY_PY_UCRYPTOLIB` and `MICROPY_PY_UHASHLIB` C macros are all defined to zero at build time. `grep` will be your friend here...
+
+#### unix
+For the unix port, the three C macros above can be easily disabled by setting the `MICROPY_PY_USSL=0` makefile variable in `ports/unix/mpconfigport.mk`. This should automatically ensure the `MICROPY_PY_USSL` C macro is not set, as well as prevent the `MICROPY_PY_UCRYPTOLIB` and `MICROPY_PY_UHASHLIB` C macros  from later being defined to 1 in `port/unix/variants/mpconfigvariant_common.h`.
+
+#### stm32
+- If your board config makefile (`ports/stm32/board/$(BOARD)/mpconfigboard.mk`) contains the makefile variable "`MICROPY_PY_USSL=1`", then change the assignment to set this variable to 0.
+- If your board config makefile contains the makefile variable "`MICROPY_SSL_MBEDTLS=1`" then change the assignment to set this variable to 0
+- Modify `ports/stm32/mpconfigport.h` such that the `MICROPY_PY_UCRYPTOLIB` C macro is never defined
+- Modify `ports/stm32/mpconfigport.h` such that the `MICROPY_TRACKED_ALLOC` C macro is EXPLICITLY defined to 1, and not set to the value of another macro
 
