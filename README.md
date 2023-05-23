@@ -44,7 +44,7 @@ Some ports also contain a `wolfssl_port.c` file containing implementations of ce
 
 Additionally, the C macro `MICROPY_TRACKED_ALLOC` must be defined to 1, which not all ports do by default.
 
-Unfortunately, there is little consistency between the makefiles/cmake files for each each micropython port with regards to these macros. As such, each port might define these macros in a different location, might optionally define them based on a different macro, or might not define them at all, relying on a default value instead. Therefore it might take a little bit of hunting through the source code to find out the best way to disable these macros in your port. See section [Disabling-built-in modules for each port](disabling-built-in-modules-for-each-port) for more information.
+Unfortunately, there is little consistency between the makefiles/cmake files for each each micropython port with regards to these macros. As such, each port might define these macros in a different location, might optionally define them based on a different macro, or might not define them at all, relying on a default value instead. Therefore it might take a little bit of hunting through the source code to find out the best way to disable these macros in your port. See section [Disabling-built-in modules for each port](###disabling-built-in-modules-for-each-port) for more information.
 
 ### Steps
 
@@ -63,7 +63,7 @@ git submodule update --init --recursive
 #define MICROPY_PY_UHASHLIB   0
 ```
 
-**NOTE**: See [Disabling built-in modules for each port](disabling-built-in-modules-for-each-port) section below for port-specific instructions on the best way to do this.
+**NOTE**: See [Disabling built-in modules for each port](###disabling-built-in-modules-for-each-port) section below for port-specific instructions on the best way to do this.
 
 5. Run `make clean` for your port (for some ports you need to include the `BOARD` or `VARIANT` argument to make)
 6. Build your micropython port, providing `make` with two important command line variables: The path to your user module directory in the `USER_C_MODULES` variable, and the target port for wolfSSL in the `WOLFSSL_PORT` variable:
