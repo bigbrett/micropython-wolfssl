@@ -454,9 +454,7 @@ STATIC const mp_rom_map_elem_t ussl_socket_locals_dict_table[] = {
     #if MICROPY_PY_USSL_FINALISER
     { MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&mp_stream_close_obj) },
     #endif
-    #if MICROPY_UNIX_COVERAGE
     { MP_ROM_QSTR(MP_QSTR_ioctl), MP_ROM_PTR(&mp_stream_ioctl_obj) },
-    #endif
     { MP_ROM_QSTR(MP_QSTR_getpeercert), MP_ROM_PTR(&mod_ssl_getpeercert_obj) },
 };
 
