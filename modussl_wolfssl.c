@@ -80,7 +80,7 @@ void wolfSSL_logging_cb(const int logLevel, const char *const logMessage)
 {
     mp_printf(&mp_plat_print, "WOLFSSL DBG: %s\n", logMessage);
 }
-#endif 
+#endif
 
 STATIC NORETURN void wolfssl_raise_error(int err) {
 
@@ -91,7 +91,7 @@ STATIC NORETURN void wolfssl_raise_error(int err) {
     }
 
     wolfSSL_ERR_error_string(err, (char*)o_str_buf);
-    
+
     // Put the exception object together
     o_str->base.type = &mp_type_str;
     o_str->data = o_str_buf;
@@ -104,22 +104,17 @@ STATIC NORETURN void wolfssl_raise_error(int err) {
 
 // _wolfssl_ssl_send is called by wolfSSL as a custom IO function to send bytes from the underlying socket
 STATIC int _wolfssl_ssl_send(WOLFSSL* ssl, char* buf, int len, void* ctx) {
-    //printf("******Send\n");
     mp_obj_t sock = *(mp_obj_t *)ctx;
 
     const mp_stream_p_t *sock_stream = mp_get_stream(sock);
     int err;
 
     mp_uint_t out_sz = sock_stream->write(sock, buf, len, &err);
-    //printf("  out_sz = %ld\n  err = %d\n",out_sz, err);
     if (out_sz == MP_STREAM_ERROR) {
-        //printf("  ssl send :: MP_STREAM_ERROR\n");
         if (mp_is_nonblocking_error(err)) {
-            //printf("  WANT_WRITE\n");
             return WOLFSSL_CBIO_ERR_WANT_WRITE;
         }
-        // BRN-TODO MBEDTLS negates the below value, apparently it only passes through negatives? Circle back to this
-        return err; // convert an MP_ERRNO to something mbedtls passes through as error
+        return err;
     } else {
         return out_sz;
     }
@@ -127,25 +122,18 @@ STATIC int _wolfssl_ssl_send(WOLFSSL* ssl, char* buf, int len, void* ctx) {
 
 // _wolfssl_ssl_recv is called by wolfSSL as a custom IO function to receive bytes from the underlying socket
 STATIC int _wolfssl_ssl_recv(WOLFSSL* ssl, char *buf, int len, void* ctx) {
-    //printf("******Recv\n");
     mp_obj_t sock = *(mp_obj_t *)ctx;
 
     const mp_stream_p_t *sock_stream = mp_get_stream(sock);
     int err;
 
     mp_uint_t out_sz = sock_stream->read(sock, buf, len, &err);
-    //printf("  out_sz = %ld\n  err = %d\n",out_sz, err);
     if (out_sz == MP_STREAM_ERROR) {
-        //printf("  ssl recv :: MP_STREAM_ERROR\n");
         if (mp_is_nonblocking_error(err)) {
-            //printf("  WANT_READ\n");
             return WOLFSSL_CBIO_ERR_WANT_READ;
         }
         return err;
     } else {
-        //printf("out_sz = %ld\n",out_sz);
-        
-        // BRN-TODO should we really be singling out this case? 
         if (out_sz == 0) {
             return WOLFSSL_CBIO_ERR_WANT_READ;
         }
@@ -172,32 +160,26 @@ STATIC mp_obj_ssl_socket_t *socket_new(mp_obj_t sock, struct ssl_args *args) {
     o->last_error = 0;
 
     if ((ret = wolfSSL_Init()) != WOLFSSL_SUCCESS) {
-        // BRN-TODO: best way to handle?
         goto cleanup;
     }
 
 #if WOLFSSL_DEBUG
     wolfSSL_Debugging_ON();
     wolfSSL_SetLoggingCb(wolfSSL_logging_cb);
-#endif 
+#endif
 
-    // BRN-TODO: entropy seeding?
-
-    // if server, load server method and associated certs, CA, keys, also look at SNI...
     if (args->server_side.u_bool) {
         if ((o->ctx = wolfSSL_CTX_new(wolfTLSv1_3_server_method())) == NULL) {
-            // BRN-TODO: error handling
             goto cleanup;
         }
     }
     else {
         if ((o->ctx = wolfSSL_CTX_new(wolfTLSv1_3_client_method())) == NULL) {
-            // BRN-TODO: error handling
             goto cleanup;
         }
     }
 
-    // unit tests use a 512 bit key 
+    // unit tests use a 512 bit key
     if (wolfSSL_CTX_SetMinRsaKey_Sz(o->ctx, 512) != WOLFSSL_SUCCESS) {
         goto cleanup;
     }
@@ -232,13 +214,7 @@ STATIC mp_obj_ssl_socket_t *socket_new(mp_obj_t sock, struct ssl_args *args) {
             mp_raise_ValueError(MP_ERROR_TEXT("invalid CA"));
             goto cleanup;
         }
-    } /* else {
-        ret = wolfSSL_CTX_set_cipher_list(o->ctx, "ADH-AES128-SHA");
-        if (ret != SSL_SUCCESS) {
-            //printf("Failed to set cipher list\n"); 
-        }
     }
-    */
 
     // server-side SNI
     if (args->server_hostname.u_obj != mp_const_none) {
@@ -246,7 +222,6 @@ STATIC mp_obj_ssl_socket_t *socket_new(mp_obj_t sock, struct ssl_args *args) {
         ret = wolfSSL_CTX_UseSNI(o->ctx, WOLFSSL_SNI_HOST_NAME, sni, strlen(sni));
         if (ret != WOLFSSL_SUCCESS) {
             mp_raise_ValueError(MP_ERROR_TEXT("unable to set SNI"));
-            // BRN-TODO: error handling for ret
             goto cleanup;
         }
         wolfSSL_CTX_SNI_SetOptions(o->ctx, WOLFSSL_SNI_HOST_NAME, WOLFSSL_SNI_CONTINUE_ON_MISMATCH);
@@ -261,10 +236,7 @@ STATIC mp_obj_ssl_socket_t *socket_new(mp_obj_t sock, struct ssl_args *args) {
     wolfSSL_CTX_SetIORecv(o->ctx, _wolfssl_ssl_recv);
 
     // create new session context
-    //printf("Creating session context...\n");
     if ((o->ssl = wolfSSL_new(o->ctx)) == NULL) {
-        //printf("Unable to create session context...\n");
-        // BRN-TODO: error handling for ret
         goto cleanup;
     }
 
@@ -273,14 +245,11 @@ STATIC mp_obj_ssl_socket_t *socket_new(mp_obj_t sock, struct ssl_args *args) {
     wolfSSL_SetIOWriteCtx(o->ssl, &o->sock);
 
     // optionally, do handshake
-    //if (args->server_side.u_bool && args->do_handshake.u_bool) {
     if (args->do_handshake.u_bool) {
-        //printf("***DOING HANDSHAKE\n");
         while ((ret = wolfSSL_connect(o->ssl)) != WOLFSSL_SUCCESS)  {
             if (ret != WOLFSSL_ERROR_WANT_WRITE && ret != WOLFSSL_ERROR_WANT_READ) {
                 goto cleanup;
             }
-            //printf("*** HANDSHAKE WANT READ/WRITE detected");
             #ifdef MICROPY_EVENT_POLL_HOOK
             MICROPY_EVENT_POLL_HOOK
             #endif
@@ -350,85 +319,66 @@ STATIC void socket_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kin
 }
 
 STATIC mp_uint_t socket_read(mp_obj_t o_in, void *buf, mp_uint_t size, int *errcode) {
-    //printf("**** SOCKET READ\n");
     mp_obj_ssl_socket_t *o = MP_OBJ_TO_PTR(o_in);
     o->poll_mask = 0;
 
     if (o->last_error) {
-        //printf("**** SOCKET READ: o->last_error=true, ret MP_STREAM_ERROR\n");
         *errcode = o->last_error;
         return MP_STREAM_ERROR;
     }
 
     int ret = wolfSSL_read(o->ssl, buf, size);
-    //printf("**** SOCKET READ: wolfSSL_read returned %d\n",ret);
     if (ret > 0) {
         // we read data
         return ret;
     } else {
-        // ret==0 will be returned upon failure. This may be caused by a either a clean (close notify alert) shutdown 
-        // or just that the peer closed the connection. Call wolfSSL_get_error() for the specific error code. 
-        // WOLFSSL_FATAL_ERROR will be returned upon failure when either an error occurred or, when using non-blocking sockets, the 
+        // ret==0 will be returned upon failure. This may be caused by a either a clean (close notify alert) shutdown
+        // or just that the peer closed the connection. Call wolfSSL_get_error() for the specific error code.
+        // WOLFSSL_FATAL_ERROR will be returned upon failure when either an error occurred or, when using non-blocking sockets, the
         // WOLFSSL_ERROR_WANT_READ or WOLFSSL_ERROR_WANT_WRITE error was received and and the application needs to call wolfSSL_read() again.
         // in either case, we only care about handling WANT_READ/WANT_WRITE and everything else is a stream error
         int err = wolfSSL_get_error(o->ssl, ret);
-        //printf("**** SOCKET READ: wolfSSL_read error=%d\n",err);
         if (err == WOLFSSL_ERROR_WANT_READ) {
-            //printf("**** SOCKET READ: wolfSSL_read error :::: WANT_READ\n");
             ret = MP_EWOULDBLOCK;
         } else if (err == WOLFSSL_ERROR_WANT_WRITE) {
-            //printf("**** SOCKET READ: wolfSSL_read error :::: WANT_WRITE\n");
             // If handshake is not finished, read attempt may end up in protocol
             // wanting to write next handshake message. The same may happen with
             // renegotation.
             ret = MP_EWOULDBLOCK;
             o->poll_mask = MP_STREAM_POLL_WR;
         } else {
-            //printf("**** SOCKET READ: wolfSSL_read error :::: OTHER\n");
-            // If handshake is not finished, read attempt may end up in protocol
-            // BRN-TODO (err vs ret here?) 
             o->last_error = err;
         }
-        // BRN-TODO (err vs ret here?) 
         *errcode = ret;
         return MP_STREAM_ERROR;
     }
 }
 
 STATIC mp_uint_t socket_write(mp_obj_t o_in, const void *buf, mp_uint_t size, int *errcode) {
-    //printf("**** SOCKET WRITE\n");
     mp_obj_ssl_socket_t *o = MP_OBJ_TO_PTR(o_in);
     o->poll_mask = 0;
 
     if (o->last_error) {
-        //printf("**** SOCKET WRITE : o->last_error=true, ret MP_STREAM_ERROR\n");
         *errcode = o->last_error;
         return MP_STREAM_ERROR;
     }
 
     int ret = wolfSSL_write(o->ssl, buf, size);
-    //printf("**** SOCKET WRITE: wolfSSL_write returned %d\n",ret);
     if (ret > 0) {
         return ret;
     } else {
         int err = wolfSSL_get_error(o->ssl, ret);
-        //printf("**** SOCKET WRITE: wolfSSL_write error=%d\n",err);
         if (err == WOLFSSL_ERROR_WANT_WRITE) {
-            //printf("**** SOCKET WRITE: wolfSSL_read error :::: WANT_WRITE\n");
             ret = MP_EWOULDBLOCK;
         } else if (err == WOLFSSL_ERROR_WANT_READ) {
-            //printf("**** SOCKET WRITE: wolfSSL_write error :::: WANT_READ\n");
             // If handshake is not finished, write attempt may end up in protocol
             // wanting to read next handshake message. The same may happen with
             // renegotation.
             ret = MP_EWOULDBLOCK;
             o->poll_mask = MP_STREAM_POLL_RD;
         } else {
-            //printf("**** SOCKET WRITE: wolfSSL_read error :::: OTHER\n");
-            // BRN-TODO (err vs ret here?) 
             o->last_error = err;
         }
-        // BRN-TODO (err vs ret here?) 
         *errcode = ret;
         return MP_STREAM_ERROR;
     }
@@ -504,9 +454,9 @@ STATIC const mp_rom_map_elem_t ussl_socket_locals_dict_table[] = {
     #if MICROPY_PY_USSL_FINALISER
     { MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&mp_stream_close_obj) },
     #endif
-//    #if MICROPY_UNIX_COVERAGE
+    #if MICROPY_UNIX_COVERAGE
     { MP_ROM_QSTR(MP_QSTR_ioctl), MP_ROM_PTR(&mp_stream_ioctl_obj) },
-//    #endif
+    #endif
     { MP_ROM_QSTR(MP_QSTR_getpeercert), MP_ROM_PTR(&mod_ssl_getpeercert_obj) },
 };
 
@@ -555,8 +505,6 @@ STATIC const mp_rom_map_elem_t mp_module_ssl_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_ussl) },
     { MP_ROM_QSTR(MP_QSTR_wrap_socket), MP_ROM_PTR(&mod_ssl_wrap_socket_obj) },
     { MP_ROM_QSTR(MP_QSTR_CERT_NONE), MP_ROM_INT(WOLFSSL_VERIFY_NONE) },
-    // BRN-TODO removing optional verification okay?
-    // { MP_ROM_QSTR(MP_QSTR_CERT_OPTIONAL), MP_ROM_INT(WOLFSSL_VERIFY_OPTIONAL) },
     { MP_ROM_QSTR(MP_QSTR_CERT_REQUIRED), MP_ROM_INT(WOLFSSL_VERIFY_PEER) },
 };
 
