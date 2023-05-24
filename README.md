@@ -44,7 +44,7 @@ git clone https://github.com/bigbrett/micropython-wolfssl.git
 git submodule update --init --recursive
 ```
 4. **OPTIONAL but recommended:** In main micropython repository, disable support for the `ussl`, `ucryptolib` and `uhashlib` modules in your port by ensuring the following C macros are defined to 0 at compile time
-```
+```C
 #define MICROPY_PY_USSL       0
 #define MICROPY_PY_UCRYPTOLIB 0
 #define MICROPY_PY_UHASHLIB   0
@@ -67,7 +67,7 @@ make USER_C_MODULES=/path/to/micropython-modules  WOLFSSL_PORT=unix \
 
 When using `micropython-wolfssl`, most users will want to disable the built-in implementations of TLS, crypto, and hashing in order to reduce code size (including two TLS stacks in MicroPython will result in a very large binary). This requires setting a few important C macros in your port's build configuration to prevent the default implementations from being compiled. These macros are:
 
- ```
+ ```C
 #define MICROPY_PY_USSL       0   // turns off built-in ussl module
 #define MICROPY_PY_UCRYPTOLIB 0   // turns off built-in ucryptolib module
 #define MICROPY_PY_UHASHLIB   0   // turns off built-in uhashlib module
@@ -90,7 +90,7 @@ For the unix port, the three C macros above can be easily disabled by setting th
 ## Using `micropython-wolfssl`
 You can now directly import the three modules (`wolfssl`, `wolfcryptolib`, `wolfhashlib`) provided by `micropython-wolfssl` using python's `import` statement. Because `micropython-wolfssl` is API compatible with the default implementations, you can simply alias the `micropython-wolfssl` modules to the name of the internal module you were using before and no further modification to your code should be needed. For example, to set up a TLS connection: 
 
-```
+```python
 # alias wolfssl to ussl on import
 import wolfssl as ussl
 
