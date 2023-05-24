@@ -2,7 +2,7 @@
 
 try:
     import uio as io
-    import ussl as ssl
+    import wolfssl as ssl
 except ImportError:
     print("SKIP")
     raise SystemExit

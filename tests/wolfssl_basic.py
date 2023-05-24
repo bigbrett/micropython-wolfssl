@@ -2,7 +2,7 @@
 
 try:
     import uio as io
-    import ussl as ssl
+    import wolfssl as ssl
 except ImportError:
     print("SKIP")
     raise SystemExit
@@ -10,11 +10,9 @@ except ImportError:
 
 class TestSocket(io.IOBase):
     def write(self, buf):
-#        print("TestSocket.write, returning",len(buf))
         return len(buf)
 
     def readinto(self, buf):
-#        print("TestSocket.readinto")
         return 0
 
     def ioctl(self, cmd, arg):
