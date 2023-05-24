@@ -1,6 +1,6 @@
 ## Overview
 ### What?
- `micropython-wolfssl` is a [user module](https://docs.micropython.org/en/v1.19.1/develop/cmodules.html) for [micropython](https://micropython.org/) that enables [wolfSSL](https://www.wolfssl.com) to be used for TLS and cryptographic operations. It is an API-compatible replacement for the built-in implementations provided by the `ussl`, `ucryptolib` and `uhashlib` modules.
+ `micropython-wolfssl` is a [user module](https://docs.micropython.org/en/v1.19.1/develop/cmodules.html) for [micropython](https://micropython.org/) that enables [wolfSSL](https://www.wolfssl.com) to be used for TLS and cryptographic operations. It is an API-compatible replacement for the built-in implementations provided by MicroPython's `ussl`, `ucryptolib` and `uhashlib` modules.
 
 ### Why wolfSSL?
 The wolfSSL embedded TLS library is a lightweight, portable, C-language-based SSL/TLS library targeted at IoT, embedded, and RTOS environments primarily because of its size, speed, and feature set. It works seamlessly in desktop, enterprise, and cloud environments as well. wolfSSL supports industry standards up to the current TLS 1.3 and DTLS 1.3, is up to 20 times smaller than OpenSSL, offers a simple API, an OpenSSL compatibility layer, OCSP and CRL support, and is backed by the robust wolfCrypt cryptography library. wolfCrypt has obtained two FIPS 140-2 Certificates, and is certified in a wide variety of operating environments. wolfCrypt is also listed on the CMVP Modules in Process List for FIPS 140-3.
