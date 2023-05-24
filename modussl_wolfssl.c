@@ -27,7 +27,7 @@
  */
 
 #include "py/mpconfig.h"
-#if !MICROPY_PY_USSL && MICROPY_PY_WOLFSSL_USSL
+#if MICROPY_PY_WOLFSSL_USSL
 
 #include <stdio.h>
 #include <string.h>
@@ -72,7 +72,7 @@ struct ssl_args {
     mp_arg_val_t do_handshake;
 };
 
-STATIC const mp_obj_type_t ussl_socket_type;
+STATIC const mp_obj_type_t wolfssl_socket_type;
 
 
 #if WOLFSSL_DEBUG
@@ -154,7 +154,7 @@ STATIC mp_obj_ssl_socket_t *socket_new(mp_obj_t sock, struct ssl_args *args) {
     #else
     mp_obj_ssl_socket_t *o = m_new_obj(mp_obj_ssl_socket_t);
     #endif
-    o->base.type = &ussl_socket_type;
+    o->base.type = &wolfssl_socket_type;
     o->sock = sock;
     o->poll_mask = 0;
     o->last_error = 0;
@@ -444,7 +444,7 @@ STATIC mp_uint_t socket_ioctl(mp_obj_t o_in, mp_uint_t request, uintptr_t arg, i
     return ret;
 }
 
-STATIC const mp_rom_map_elem_t ussl_socket_locals_dict_table[] = {
+STATIC const mp_rom_map_elem_t wolfssl_socket_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_read), MP_ROM_PTR(&mp_stream_read_obj) },
     { MP_ROM_QSTR(MP_QSTR_readinto), MP_ROM_PTR(&mp_stream_readinto_obj) },
     { MP_ROM_QSTR(MP_QSTR_readline), MP_ROM_PTR(&mp_stream_unbuffered_readline_obj) },
@@ -458,22 +458,22 @@ STATIC const mp_rom_map_elem_t ussl_socket_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_getpeercert), MP_ROM_PTR(&mod_ssl_getpeercert_obj) },
 };
 
-STATIC MP_DEFINE_CONST_DICT(ussl_socket_locals_dict, ussl_socket_locals_dict_table);
+STATIC MP_DEFINE_CONST_DICT(wolfssl_socket_locals_dict, wolfssl_socket_locals_dict_table);
 
-STATIC const mp_stream_p_t ussl_socket_stream_p = {
+STATIC const mp_stream_p_t wolfssl_socket_stream_p = {
     .read = socket_read,
     .write = socket_write,
     .ioctl = socket_ioctl,
 };
 
 STATIC MP_DEFINE_CONST_OBJ_TYPE(
-    ussl_socket_type,
-    MP_QSTR_ussl,
+    wolfssl_socket_type,
+    MP_QSTR_wolfssl,
     MP_TYPE_FLAG_NONE,
     // Save on qstr's, reuse same as for module
     print, socket_print,
-    protocol, &ussl_socket_stream_p,
-    locals_dict, &ussl_socket_locals_dict
+    protocol, &wolfssl_socket_stream_p,
+    locals_dict, &wolfssl_socket_locals_dict
     );
 
 STATIC mp_obj_t mod_ssl_wrap_socket(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
@@ -500,7 +500,7 @@ STATIC mp_obj_t mod_ssl_wrap_socket(size_t n_args, const mp_obj_t *pos_args, mp_
 STATIC MP_DEFINE_CONST_FUN_OBJ_KW(mod_ssl_wrap_socket_obj, 1, mod_ssl_wrap_socket);
 
 STATIC const mp_rom_map_elem_t mp_module_ssl_globals_table[] = {
-    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_ussl) },
+    { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_wolfssl) },
     { MP_ROM_QSTR(MP_QSTR_wrap_socket), MP_ROM_PTR(&mod_ssl_wrap_socket_obj) },
     { MP_ROM_QSTR(MP_QSTR_CERT_NONE), MP_ROM_INT(WOLFSSL_VERIFY_NONE) },
     { MP_ROM_QSTR(MP_QSTR_CERT_REQUIRED), MP_ROM_INT(WOLFSSL_VERIFY_PEER) },
@@ -508,11 +508,11 @@ STATIC const mp_rom_map_elem_t mp_module_ssl_globals_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(mp_module_ssl_globals, mp_module_ssl_globals_table);
 
-const mp_obj_module_t mp_module_ussl = {
+const mp_obj_module_t mp_module_wolfssl = {
     .base = { &mp_type_module },
     .globals = (mp_obj_dict_t *)&mp_module_ssl_globals,
 };
 
-MP_REGISTER_MODULE(MP_QSTR_ussl, mp_module_ussl);
+MP_REGISTER_MODULE(MP_QSTR_wolfssl, mp_module_wolfssl);
 
-#endif // !MICROPY_PY_USSL && MICROPY_PY_WOLFSSL_USSL
+#endif // MICROPY_PY_WOLFSSL_USSL
