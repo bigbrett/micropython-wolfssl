@@ -1,0 +1,44 @@
+name: test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+#   build_stm32:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout 
+#       uses: actions/checkout@v3
+#       with:
+#         path: modules/micropython-wolfssl
+#     - name: Checkout upstream micropython repo
+#       uses: actions/checkout@v3
+#       with:
+#         repository: micropython/micropython
+#         path: micropython    
+#     - name: build
+#       run: |
+#         cd micropython
+#         source tools/ci.sh && ci_stm32_setup
+#         cd ports/stm32
+#         make BOARD=NUCLEO_F446RE USER_C_MODULES=../modules WOLFSSL_PORT=stm32 
+        
+  build_unix:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v3
+      with:
+        path: modules/micropython-wolfssl
+    - name: Checkout upstream micropython repo
+      uses: actions/checkout@v3
+      with:
+        repository: micropython/micropython
+        path: micropython    
+    - name: build
+      run: |
+        cd micropython
+        source tools/ci.sh && ci_unix_standard_build USER_C_MODULES=${GITHUB_WORKSPACE}/modules WOLFSSL_PORT=unix 
