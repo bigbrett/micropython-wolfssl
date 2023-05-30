@@ -41,4 +41,7 @@ jobs:
     - name: build
       run: |
         cd micropython
-        source tools/ci.sh && ci_unix_standard_build USER_C_MODULES=${GITHUB_WORKSPACE}/modules WOLFSSL_PORT=unix 
+        source tools/ci.sh
+        ci_unix_build_helper USER_C_MODULES=${GITHUB_WORKSPACE}/modules WOLFSSL_PORT=unix 
+        ci_unix_build_ffi_lib_helper gcc
+
